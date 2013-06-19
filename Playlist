@@ -1,28 +1,20 @@
 package queue.playlist;
 
-import java.awt.List;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
+import java.util.Scanner;
 
-import javax.swing.JList;
+public class Playlist {
 
-
-public class Playlist{
-
-  private PlaylistElement head;
-	private static PlaylistElement root;
+	private PlaylistElement root;
 	private String name;
-	private List queue;
 
 	/**
 	 * Erstelle Queue basierend auf einer Liste
 	 * 
 	 */
 	public Playlist() {
-		queue = new List();
 	}
 
 	/**
@@ -32,161 +24,224 @@ public class Playlist{
 	 *            Der Name der Playlist
 	 */
 	public Playlist(String name) {
-		head = null;
-		this.name = name;//setName
+		this.name = name;
 	}
 
 	/**
-	 * Emulation einer Play-FunktionalitŠt: Erstes Element wird gelšscht
+	 * Emulation einer Play-Funktionalitaet: Erstes Element wird gelöscht
 	 */
 	public void play() {
-		
-		if(root == null){
-		}
-
-		else {
+		if (root == null) {
+			
+		}else {
 			root = root.next;
 		}
 	}
-	
+
 	/**
-	 * †bergebener Musiktitel wird am Ende der Playlist hinzugefŸgt
+	 * Übergebener Musiktitel wird am Ende der Playlist hinzugefügt
 	 * 
 	 * @param neuerMusiktitel
-	 *            Der Musiktitel, der der Playlist hinzugefŸgt werden soll.
+	 *            Der Musiktitel, der der Playlist hinzugefuegt werden soll.
 	 */
 	public void hinzufuegenAmEnde(Musiktitel neuerMusiktitel) {
 		
 		if (root != null) {
-    		PlaylistElement temp = root;
-    		while (temp.next != null) {
-    			temp = temp.next;
-    		}
-    	temp.value = new Musiktitel(neuerMusiktitel);
-    	} 
-		else {
-			//head = new Musiktitel();
-    	}
+			PlaylistElement temp = root;
+			// Suchen letzte Element auf der Playlist
+			while (temp.next != null) {
+				temp = temp.next;
+			}
+			temp.next = new PlaylistElement(neuerMusiktitel, null);
+		} 
+		else 
+		{
+			root = new PlaylistElement(neuerMusiktitel, null);
+		}
 	}
 
 	/**
-	 * †bergebener Musiktitel wird aus Playlist entfernt.
+	 * Übergebener Musiktitel wird aus Playlist entfernt.
 	 * 
 	 * @param zuEntfernen
 	 *            Der Musiktitel, der aus der Playlist entfernt werden soll.
 	 */
 	public void entferneMusiktitel(Musiktitel zuEntfernen) {
-		if (root != null) {	// Enthält Liste Objekte
-			
-			PlaylistElement temp = root;	
-			while (temp.next != null) {			
-				if (head.equals(zuEntfernen)) { 
-					//entferne Objekt			
+		if (root != null) {
+			boolean elemFound = false;
+			PlaylistElement temp = root;
+			// Suchen Element zu entfernen
+			while (temp != null && !elemFound) {
+				// Erster Titel sollte gelöscht werden
+				if (root.value.equals(zuEntfernen)) {
+					// Zweites Element wird zu erstem Element
+					root = root.next;
+					elemFound = true;
+					// Titel in der mitte sollte gelöscht werden
+				} else if (temp.next != null && temp.next.value.equals(zuEntfernen)) {
+					if (temp.next.next != null) {
+						temp.next = temp.next.next;
+						// Letzter Titel sollte gelöscht werden
+					} else {
+						temp.next = null;
+					}
+					elemFound = true;
 				}
-			temp = temp.next;				
-			}								
-		}
-		else {
-			
-		}
-		//	head.remove(zuEntfernen);
-	}
-
-
-	/**
-	 * Alle in dieser Playlist enthaltenen Titel als Array zurŸckliefern
-	 * 
-	 * @return Ein Array, das so lang ist, wie die Playlist Titel enthŠlt.
-	 */
-	public String[] getMusiktitel() {
-		int groeße = Playlist.length();
-		String[] musikTitel = new String[groeße];
-		
-		if(head != null)
-		{
-			PlaylistElement element = this.head;
-			for(int i = 0; i <= musikTitel.length; i++)
-			{
-			musikTitel[i] = element.value.getLiedtitel();	
-			element = element.getNext();
+				temp = temp.next;
 			}
 		}
-	
-		return musikTitel;
 	}
-	
-
 
 	/**
-	 * Berechnet die Länge der Liste
+	 * Alle in dieser Playlist enthaltenen Titel als Array zurückliefern
 	 * 
-	 * @return length
+	 * @return Ein Array, das so lang ist, wie die Playlist Titel enthält.
 	 */
-	public static int length() {
-		int length = 0;
-		PlaylistElement t = root;
-		while (t != null) {
-			t = t.next;
-			length++;
-		};
-		return length;
+	public Musiktitel[] getMusiktitel() {
+		Musiktitel[] titelListe = new Musiktitel[length()];
+		if (root != null) {
+			PlaylistElement temp = root;
+			int i = 0;
+			// Speichern die Liste Element in Array
+			while (temp != null) {
+				titelListe[i] = temp.value;
+				temp = temp.next;
+				i++;
+			}
+		}
+		return titelListe;
 	}
-
 
 	/**
 	 * Alle Inhalte der Playlist lšschen.
 	 */
 	public void leerePlaylist() {
-		//head.removeAll();
+		root = null;
 	}
 
 	/**
-	 * †bergebene Datei wird zeilenweise eingelesen. Die Datei muss
-	 * folgenderma§en aufgebaut sein: Titel [Tab] KŸnstler [neue Zeile]
+	 * Übergebene Datei wird zeilenweise eingelesen. Die Datei muss
+	 * folgenderma§en aufgebaut sein: Titel [Tab] Künstler [neue Zeile]
 	 * 
 	 * @param file
 	 * @throws IOException
 	 */
 	public void leseAusDatei(File file) throws IOException {
+		try {
+			if (file.exists()) {
 		
-		
-		try
-		{
-		  FileReader fr = new FileReader("./Queue-Playlist.txt" );
-		  BufferedReader br = new BufferedReader(fr);
-		  String zeile = br.readLine();
+			//lese datei ein
+			FileReader eingabestrom = new FileReader(file);
+			//verarbeite eingabestrom mit scanner
+			Scanner in = new Scanner(eingabestrom);
+			// trenner ist "neue zeile"
+			in.useDelimiter("\n");
 
-		 while (zeile != null )
-		 {
-			 zeile = br.readLine();
-			 System.out.println(zeile);
-		 }
-		    br.close();
-		  
+			//durchläuft datei zeilenweise, speichert aktuelle zeile in array
+			while (in.hasNextLine()) {
+				//zerteilt zeile nochmals, mit "tab" als trennzeichen
+				// track[0] ist titel, track[1] ist interpret
+				String[] track = in.nextLine().split("\t");
+				Musiktitel newTrack = new Musiktitel(track[1], track[0]);
+				hinzufuegenAmEnde(newTrack);
+			}
+			in.close();
+			}	
 		}
-		catch ( IOException e ) {
-		  System.err.println( "Fehler beim Lesen der Datei!" );
+		catch ( IOException e) {
+			 System.err.println( "Fehler beim Lesen der Datei!" );
 		}
+		
 	}
 
 	/**
-	 * Der Ÿbergebene Musiktitel wird in der Playlist eine Position weiter
+	 * Der Übergebene Musiktitel wird in der Playlist eine Position weiter
 	 * bewegt.
 	 * 
 	 * @param musiktitel
 	 */
 	public void bewegeTitelEinePositionWeiter(Musiktitel musiktitel) {
-		
+		if (root != null) {
+			boolean elemFound = false;
+			PlaylistElement temp = root;
+			// Suchen nach Element vor musiktitel
+			while (temp != null && !elemFound) {
+				// Mmusiktitel ist erstes Element
+				if (root.value.equals(musiktitel)) {
+					PlaylistElement tempElem = root.next;
+					// Zeige von erstem Element auf drittes Element
+					root.next = root.next.next;
+					// Zeige von tempElem auf erstes Element, sonst verschwindet
+					// die ganze liste
+					tempElem.next = root;
+					// tempElem ist erstes Element
+					root = tempElem;
+					elemFound = true;
+					// Musiktitel ist in der mitte
+				} else if (temp.next != null
+						&& temp.next.value.equals(musiktitel)) {
+					if (temp.next.next != null) {
+						PlaylistElement tempElem = temp.next.next;
+						// Zeige von currentElem auf Element nach nächstem Element von
+						// currentElem
+						temp.next.next = temp.next.next.next;
+						// Zeige von tempElem auf currentElem, sonst
+						// verschwindet
+						// alles nach currentElem
+						tempElem.next = temp.next;
+						// tempElem ist currentElem
+						temp.next = tempElem;
+						elemFound = true;
+					} // Falls musiktitel am ende, passiert nichts
+					elemFound = true;
+				}
+				temp = temp.next;
+			}
+		}
 	}
 
 	/**
-	 * Der Ÿbergebene Musiktitel wird in der Playlist eine Position zurŸck
+	 * Der Übergebene Musiktitel wird in der Playlist eine Position zurück
 	 * bewegt.
 	 * 
 	 * @param musiktitel
 	 */
 	public void bewegeTitelEinePositionZurueck(Musiktitel musiktitel) {
-
+		if (root != null) {
+			boolean elemFound = false;
+			PlaylistElement temp = root;
+			// Suchen nach Element vor Element vor musiktitel
+			while (temp != null && !elemFound) {
+				// Musiktitel ist zweites Element
+				if (root.next.value.equals(musiktitel)) {
+					PlaylistElement tempElem = root.next;
+					// Zeige von erstem Element auf drittes Element
+					root.next = root.next.next;
+					// Zeige von tempElem auf erstes Element, sonst verschwindet die ganze liste
+					tempElem.next = root;
+					// tempElem ist erstes Element
+					root = tempElem;
+					elemFound = true;
+					// musiktitel ist in der mitte
+				} else if (temp.next.next != null
+						&& temp.next.next.value.equals(musiktitel)) {
+					if (temp.next.next != null) {
+						PlaylistElement tempElem = temp.next;
+						// das nächste Element von currentElem ist Element nach Element nach Element von
+						// currentElem
+						temp.next = temp.next.next;
+						// nächstes Element von tempElem ist currentElem, sonst
+						// verschwindet alles nach currentElem
+						tempElem.next = temp.next.next;
+						// tempElem ist currentElem.next
+						temp.next.next = tempElem;
+						elemFound = true;
+					}
+					elemFound = true;
+				}
+				temp = temp.next;
+			}
+		}
 	}
 
 	/**
@@ -199,7 +254,7 @@ public class Playlist{
 	}
 
 	/**
-	 * VerŠndert den Namen dieser Playlist
+	 * Verändert den Namen dieser Playlist
 	 * 
 	 * @param name
 	 *            Der neue Name dieser Playlist
@@ -209,25 +264,37 @@ public class Playlist{
 	}
 
 	/**
-	 * HŠngt eine andere Playlist an diese Playlist an.
+	 * Hängt eine andere Playlist an diese Playlist an.
 	 */
 	public void haengePlaylistAn(Playlist anderePlaylist) {
 		if (root != null) {
-    		PlaylistElement temp = root;
-    		/*Schleife durchläuft die Employees,
-			solange bis das letzte Element ereicht ist,
-			dann wird das root Element von Liste2 an das Ende
-			von Liste 1 angehängt. Somit werden beide verkettet
-    		 */
-    		while (temp.next != null) {
-    			temp = temp.next;
-    		}
-//    		temp.next = liste2.root;
-//    	} else {
-//    		// Wenn liste1 leer ist ist erstes Element von liste1
-//    		// gleich erstes Element von liste2
-//    		root = liste2.root;
-//	}
+			PlaylistElement temp = root;
+			// Sucht nach letztes Element
+			while (temp.next != null) {
+				temp = temp.next;
+			}
+			// Letztes Element zeigt auf erstem elem der zweiten Liste
+			temp.next = anderePlaylist.root;
+			// Falls playlist leer ist
+		} else {
+			root = anderePlaylist.root;
+		}
 	}
+
+	/**
+	 * Bestimmt die Länge der Liste.
+	 * 
+	 * @return length
+	 */
+	public int length() {
+		int length = 0;
+
+		// Zähle die länge der liste solange alle Elemente in liste durchlaufe
+		PlaylistElement currentElem = root;
+		while (currentElem != null) {
+			length++;
+			currentElem = currentElem.next;
+		}
+		return length;
 	}
 }
