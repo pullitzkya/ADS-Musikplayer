@@ -8,13 +8,14 @@ import java.util.Scanner;
 public class Playlist {
 
 	private PlaylistElement root;
-	private String name;
+	private String name = "";
 
 	/**
 	 * Erstelle Queue basierend auf einer Liste
 	 * 
 	 */
 	public Playlist() {
+		root = null;
 	}
 
 	/**
@@ -24,6 +25,7 @@ public class Playlist {
 	 *            Der Name der Playlist
 	 */
 	public Playlist(String name) {
+		root = null;
 		this.name = name;
 	}
 
@@ -67,28 +69,16 @@ public class Playlist {
 	 *            Der Musiktitel, der aus der Playlist entfernt werden soll.
 	 */
 	public void entferneMusiktitel(Musiktitel zuEntfernen) {
-		if (root != null) {
-			boolean elemFound = false;
-			PlaylistElement temp = root;
-			// Suchen Element zu entfernen
-			while (temp != null && !elemFound) {
-				// Erster Titel sollte gelöscht werden
-				if (root.value.equals(zuEntfernen)) {
-					// Zweites Element wird zu erstem Element
-					root = root.next;
-					elemFound = true;
-					// Titel in der mitte sollte gelöscht werden
-				} else if (temp.next != null && temp.next.value.equals(zuEntfernen)) {
-					if (temp.next.next != null) {
-						temp.next = temp.next.next;
-						// Letzter Titel sollte gelöscht werden
-					} else {
-						temp.next = null;
-					}
-					elemFound = true;
-				}
+		PlaylistElement temp = root;
+		PlaylistElement prev = root;
+		if (root.value == zuEntfernen) {
+			root = null;
+		} else {
+			while (temp.value != zuEntfernen) {
+				prev = temp;
 				temp = temp.next;
 			}
+			prev.next = temp.next;
 		}
 	}
 
@@ -161,41 +151,31 @@ public class Playlist {
 	 * @param musiktitel
 	 */
 	public void bewegeTitelEinePositionWeiter(Musiktitel musiktitel) {
+		PlaylistElement temp = root;
+		PlaylistElement prev = root;
+		PlaylistElement middle = root;
+		PlaylistElement next = root;
 		if (root != null) {
-			boolean elemFound = false;
-			PlaylistElement temp = root;
-			// Suchen nach Element vor musiktitel
-			while (temp != null && !elemFound) {
-				// Mmusiktitel ist erstes Element
-				if (root.value.equals(musiktitel)) {
-					PlaylistElement tempElem = root.next;
-					// Zeige von erstem Element auf drittes Element
-					root.next = root.next.next;
-					// Zeige von tempElem auf erstes Element, sonst verschwindet
-					// die ganze liste
-					tempElem.next = root;
-					// tempElem ist erstes Element
-					root = tempElem;
-					elemFound = true;
-					// Musiktitel ist in der mitte
-				} else if (temp.next != null
-						&& temp.next.value.equals(musiktitel)) {
-					if (temp.next.next != null) {
-						PlaylistElement tempElem = temp.next.next;
-						// Zeige von currentElem auf Element nach nächstem Element von
-						// currentElem
-						temp.next.next = temp.next.next.next;
-						// Zeige von tempElem auf currentElem, sonst
-						// verschwindet
-						// alles nach currentElem
-						tempElem.next = temp.next;
-						// tempElem ist currentElem
-						temp.next = tempElem;
-						elemFound = true;
-					} // Falls musiktitel am ende, passiert nichts
-					elemFound = true;
+			if (middle.value != musiktitel) {
+				while (middle.value != musiktitel) {
+					prev = middle;
+					middle = prev.next;
+					if (middle.next != null) {
+						next = middle.next;
+					} else {
+						next = null;
+					}
 				}
-				temp = temp.next;
+				temp = middle;
+				prev.next = next;
+				temp.next = next.next;
+				next.next = temp;
+			}
+			else{
+				temp = root;
+				root = root.next;
+				temp.next = root.next;
+				root.next = temp;
 			}
 		}
 	}
@@ -207,39 +187,30 @@ public class Playlist {
 	 * @param musiktitel
 	 */
 	public void bewegeTitelEinePositionZurueck(Musiktitel musiktitel) {
+		PlaylistElement temp = root;
+		PlaylistElement prev = root;
+		PlaylistElement middle = root;
+		PlaylistElement next = root;
 		if (root != null) {
-			boolean elemFound = false;
-			PlaylistElement temp = root;
-			// Suchen nach Element vor Element vor musiktitel
-			while (temp != null && !elemFound) {
-				// Musiktitel ist zweites Element
-				if (root.next.value.equals(musiktitel)) {
-					PlaylistElement tempElem = root.next;
-					// Zeige von erstem Element auf drittes Element
-					root.next = root.next.next;
-					// Zeige von tempElem auf erstes Element, sonst verschwindet die ganze liste
-					tempElem.next = root;
-					// tempElem ist erstes Element
-					root = tempElem;
-					elemFound = true;
-					// musiktitel ist in der mitte
-				} else if (temp.next.next != null
-						&& temp.next.next.value.equals(musiktitel)) {
-					if (temp.next.next != null) {
-						PlaylistElement tempElem = temp.next;
-						// das nächste Element von currentElem ist Element nach Element nach Element von
-						// currentElem
-						temp.next = temp.next.next;
-						// nächstes Element von tempElem ist currentElem, sonst
-						// verschwindet alles nach currentElem
-						tempElem.next = temp.next.next;
-						// tempElem ist currentElem.next
-						temp.next.next = tempElem;
-						elemFound = true;
+			if (middle.next.value != musiktitel) {
+				while (middle.next.value != musiktitel) {
+					prev = middle;
+					middle = prev.next;
+					if (middle.next != null) {
+						next = middle.next;
+					} else {
+						next = null;
 					}
-					elemFound = true;
 				}
-				temp = temp.next;
+				temp = middle;
+				prev.next = next;
+				temp.next = next.next;
+				next.next = temp;
+			} else {
+				temp = root;
+				root = root.next;
+				temp.next = root.next;
+				root.next = temp;
 			}
 		}
 	}
@@ -250,7 +221,7 @@ public class Playlist {
 	 * @return Der Name dieser Playlist
 	 */
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
@@ -275,6 +246,7 @@ public class Playlist {
 			}
 			// Letztes Element zeigt auf erstem elem der zweiten Liste
 			temp.next = anderePlaylist.root;
+			
 			// Falls playlist leer ist
 		} else {
 			root = anderePlaylist.root;
