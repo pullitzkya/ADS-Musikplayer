@@ -1,44 +1,256 @@
-package queue.playlist;
+/* TPE - Pflichtübung 1
+ * Gruppe: Kevin Kennell (1312707), Micha Hägele (), Andreas Pullitzky (1311169) 
+ * 
+ */
 
+import java.lang.Math;
 
-
-public class Musiktitel {
-  private String kuenstlername, liedtitel;
-	Musiktitel neuerMusiktitel = null;
+public class Bruch {
 	
-	
-	/**
-	 * Erstellt einen neuen Musiktitel mit Kuenstlernamen und Liedtitel.
-	 * @param nextMusiktitel 
+	private long zaehler;
+	private long nenner; 
+	private long ganze; 
+
+	/*	Konstruktor, nur Zaehler und Nenner werden übergeben
 	 */
-	public Musiktitel(String kuenstlername, String liedtitel) {
-		this.kuenstlername = kuenstlername;
-		this.liedtitel = liedtitel;
+	public Bruch (long z, long n){
+		this.zaehler = z;
+		this.nenner = n;
+		this.kuerzen();
+	}
+	
+	/*	Konstruktor, Zaehler, Nenner und Ganzzahl werden übergeben
+	 */
+	public Bruch (long z, long n, long g){
+		this.zaehler = z;
+		this.nenner = n;
+		this.ganze = g;
+		this.kuerzen();
+	}
+	
+	/* Methoden */
+	
+	public Bruch addiere(Bruch bruch1){
+		long z1 = this.zaehler;
+		long n1 = this.nenner;
+		long g1 = this.ganze;
+		
+		long z2 = bruch1.zaehler;
+		long n2 = bruch1.nenner;
+		long g2 = bruch1.ganze;
+		
+//		if(g1 != 0){
+//			Bruch t1 = new Bruch(g1, 1);
+//			Bruch t2 = new Bruch(z1, n1);
+//			Bruch t3 = t1.addiere(t2);
+//			z1 = t3.zaehler;
+//			n1 = t3.nenner;
+//		}
+//		
+//		if(g2 != 0){
+//			Bruch t1 = new Bruch(g2, 1);
+//			Bruch t2 = new Bruch(z2, n2);
+//			Bruch t3 = t1.addiere(t2);
+//			z2 = t3.zaehler;
+//			n2 = t3.nenner;
+//		}
+//		
+		
+		long hauptnenner = n1*n2;
+		
+		long z3 = ((hauptnenner/n1)*z1) + ((hauptnenner/n2)*z2);
+		
+		Bruch summe = new Bruch(z3, hauptnenner);
+		return summe;
+	}
+	
+	public Bruch subtrahiere(Bruch bruch1){
+		
+		return differenz;
+	}
+	
+	public Bruch multipliziere(Bruch bruch1){
+		
+		return produkt;
+	}
+	
+	public Bruch multipliziere(Bruch bruch1){
+		
+		return produkt;
+	}
+
+	public Bruch dividiere(Bruch bruch1){
+		
+		return quotient;
+	}
+	
+	public Bruch dividiere(Bruch bruch1){
+		
+		return quotient;
+	}
+	
+	public Bruch potenziere(int potenz){
+		// potenz welcher datentyp?
+		if(this.ganze == 0){
+			this.nenner = (long)java.lang.Math.pow(this.nenner, potenz);
+			this.zaehler = (long)java.lang.Math.pow(this.zaehler, potenz);
+			return this;
+		}else{
+			Bruch unecht = this.unechterBruch();
+			return unecht.potenziere(potenz);
+		}
+	}
+	
+	public Bruch echterBruch(){ 
+		// wie soll parameter sein / übungstsunde fragen
+		// soll echterbruch/unechterbruch kürzen?
+		if(this.isEcht()){
+			return this;
+		}else{
+			long newganze = this.zaehler/this.nenner;
+			long newzaehler = this.zaehler%this.nenner;
+			long newnenner = this.nenner;
+			Bruch echterBruch = new Bruch(newzaehler, newnenner, newganze);
+			return echterBruch;
+		}
+	}
+	
+	public Bruch unechterBruch(){
+		if(this.isEcht()){
+			long newzaehler = (this.ganze*this.nenner)+this.zaehler;
+			Bruch unechterBruch = new Bruch(newzaehler, this.nenner);
+			return unechterBruch;
+		}else{
+			return this;
+		}
+	}
+	
+	public boolean isEcht(){
+		return (this.zaehler < this.nenner);	
+	}
+	
+	public double getDezimalzahl(){
+		double dzaehler = (double) this.zaehler;
+		double dnenner = (double) this.nenner;
+		double dezimalzahl = dzaehler/dnenner + this.ganze;  
+		return dezimalzahl;
+	}
+	
+	public Bruch kehrwert(Bruch bruch1){
+		if(this.ganze == 0){	
+			return Bruch(this.nenner, this.zaehler);
+		}else{
+			
+		}
+	}
+
+	public long getGanze(){		
+		return this.ganze;
+	}
+	
+	public long getNenner(){		
+		return this.nenner;
+	}
+	
+	public long getZaehler(){		
+		return this.zaehler;
+	}
+	
+	public String toString(){
+		// parameterlos oder mit parameter?
+		
+		if(this.zaehler%this.nenner == 0){
+			return "" + this.zaehler/this.nenner;
+		}else{
+			if(this.isEcht()){
+				if (this.ganze == 0){
+					return this.zaehler + "/" + this.nenner;
+				}else{
+					return this.ganze + " " +  this.zaehler + "/" + this.nenner;
+				}
+			}else{
+				if(this.ganze == 0){
+					return this.zaehler + "/" + this.nenner;
+				}else{
+					return this.ganze + " " +  this.zaehler + "/" + this.nenner;
+				}
+			}
+		}
+		
 		
 	}
+	
 
-	public Musiktitel(Musiktitel neuerMusiktitel) {
-		this.neuerMusiktitel = neuerMusiktitel;
+	
+	public boolean equals(Bruch bruch1){
 		
+		if(this.isEcht() == false){
+			this.unechterBruch();
+		}
+		
+		if(bruch1.isEcht() == false){
+			bruch1.unechterBruch();
+		}
+	
+	}
+	
+	/* Hilfsmethoden */
+	
+	// Größter gemeinsamer Teiler ermitteln
+	public long ggt(long a, long b){
+		if(a%b == 0){
+			return(b);		
+		}
+		if(a < b){
+			return(ggt(b, a));
+		}else{
+			return(ggt(b, a%b));
+		}
+	}
+	
+	// Bruch kuerzen
+	public void kuerzen(){
+		long ggt = ggt(this.zaehler, this.nenner);
+		this.zaehler = this.zaehler/ggt;
+		this.nenner = this.nenner/ggt;		
 	}
 
-	public String getLiedtitel() {
-		return liedtitel;
-	}
+	
+	/* Main */ 
+	
+	 public static void main(String[] args){
 
-	public void setLiedtitel(String liedtitel) {
-		this.liedtitel = liedtitel;
-	}
-	public void setKuenstlername(String kuenstlername){
-		this.kuenstlername = kuenstlername;
-	}
+		 /*
+		Bruch test = new Bruch(44, 32);		
+		System.out.println("Ganzzahl:" + test.getGanze());
+		System.out.println("Zaheler:" + test.getZaehler());
+		System.out.println("Nenner:" + test.getNenner());		
+		System.out.println("Dezimalzahl:" + test.getDezimalzahl());
+		*/
+		 
+		/*  Bruch b1 = new Bruch(5, 8, 7);
+		 Bruch b2 = new Bruch(2, 3, 2);
+		 Bruch summe = b1.addiere(b2);
+		 
+		System.out.println("Zaheler:" + summe.getZaehler());
+		System.out.println("Nenner:" + summe.getNenner());		
+		System.out.println("Dezimalzahl:" + summe.getDezimalzahl());
+		
+		*/
+		 
+		 Bruch test1 = new Bruch(11, 2, 7);
+		 Bruch test2 = new Bruch(11,4);
+		 Bruch test3 = new Bruch(3,4,2);
+		 Bruch test4 = new Bruch(8, 4);
+		 Bruch test5 = new Bruch(4, 4);
+		 
+		System.out.println(test1.toString());
+		System.out.println(test2.toString());
+		System.out.println(test3.toString());
+		System.out.println(test4.toString());
+		System.out.println(test5.toString());
+		 
+		 
+	 }
 
-	public String getKuenstlername() {
-		return kuenstlername;
-	}
-
-    @Override
-    public String toString() {
-        return kuenstlername + " - " + liedtitel;
-    }        
 }
