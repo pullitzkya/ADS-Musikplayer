@@ -116,9 +116,13 @@ public class Bruch {
 	}
 	
 	public Bruch unechterBruch(){
+		// this werte verändern oder bruch zurückgeben?
 		if(this.isEcht()){
 			long newzaehler = (this.ganze*this.nenner)+this.zaehler;
 			Bruch unechterBruch = new Bruch(newzaehler, this.nenner);
+			this.ganze = unechterBruch.ganze;
+			this.zaehler = unechterBruch.zaehler;
+			this.nenner = unechterBruch.nenner;
 			return unechterBruch;
 		}else{
 			return this;
@@ -191,6 +195,12 @@ public class Bruch {
 		if(bruch1.isEcht() == false){
 			bruch1.unechterBruch();
 		}
+		
+		if(this.nenner == bruch1.nenner && this.zaehler == bruch1.zaehler){
+			return true;
+		}else{
+			return false;
+		}
 	
 	}
 	
@@ -238,17 +248,17 @@ public class Bruch {
 		
 		*/
 		 
-		 Bruch test1 = new Bruch(11, 2, 7);
-		 Bruch test2 = new Bruch(11,4);
-		 Bruch test3 = new Bruch(3,4,2);
-		 Bruch test4 = new Bruch(8, 4);
-		 Bruch test5 = new Bruch(4, 4);
+		
+		 Bruch test1 = new Bruch(2, 4, 2);
+		 Bruch test2 = new Bruch(4, 8, 2);
 		 
-		System.out.println(test1.toString());
-		System.out.println(test2.toString());
-		System.out.println(test3.toString());
-		System.out.println(test4.toString());
-		System.out.println(test5.toString());
+		 test1.unechterBruch();
+		if(test1.equals(test2)){
+			System.out.println("Gleich");
+		}else{
+			System.out.println("Ungleich");
+		}
+		
 		 
 		 
 	 }
